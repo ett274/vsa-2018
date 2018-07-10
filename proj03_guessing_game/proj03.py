@@ -16,10 +16,19 @@ Keep track of how many guesses the user has taken, and when the game ends, print
 import random
 y = ""
 while y != "n":
-    x = random.randint(1,9)
+    choice = raw_input("Do you want to go against the computer or another person? (1 for computer, 2 for person) ")
+    if choice == "1":
+        x = random.randint(1,9)
+        print "Okay, I'm thinking of a number between 1 and 9."
+    elif choice == "2":
+        while True:
+            x = int(raw_input("Okay, player 2 put a number between 1 and 9 here while player 1 looks away. "))
+            if 1 <= x <= 9:
+                break
+            else:
+                print "That number is invalid."
     player_input = ""
     guesses = 1
-    print "I'm thinking of a number between 1 and 9."
     tries = int(raw_input("How many guesses do you think you'll get it in? ")) + 1
     while player_input != str(x) and guesses < tries:
         player_input = raw_input("Guess (or type 'exit' to end): ")
