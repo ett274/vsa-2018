@@ -24,6 +24,9 @@ while y != "n":
         while True:
             x = int(raw_input("Okay, player 2 put a number between 1 and 9 here while player 1 looks away. "))
             if 1 <= x <= 9:
+                print "CHEATER"
+                for p in range(90):
+                    print
                 break
             else:
                 print "That number is invalid."
