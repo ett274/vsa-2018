@@ -1,5 +1,5 @@
-# Name:
-# Date:
+# Name: Eliza, Elizabeth, Maddie
+# Date: 7-11-18
 
 
 # proj05: Hangman
@@ -46,3 +46,58 @@ def choose_word(wordlist):
 wordlist = load_words()
 
 # your code begins here!
+while True:
+    word = choose_word(wordlist)
+    letters = []
+    for x in word:
+        letters.append(x)
+    blanks = []
+    for x in word:
+        blanks.append("_")
+    player_letters = []
+
+    for letter in string.lowercase:
+        player_letters.append(letter)
+    print "I'm thinking of a word that is " + str(len(word)) + " letters long."
+    guesses = len(word) + 3
+    while letters != blanks and guesses > 0:
+        print " ".join(blanks)
+        print "Available letters: " + "".join(player_letters)
+        if guesses == 1:
+            print "You have 1 guess left."
+        else:
+            print "You have " + str(guesses) + " guesses left."
+        player_input = raw_input("Guess a letter: ")
+        if player_input not in string.lowercase and player_input != word:
+            print "Invalid input."
+        elif player_input == word:
+            break
+        elif player_input in letters and player_input in player_letters:
+            counter = 0
+            for let in word:
+                if player_input == let:
+                    blanks[counter] = player_input
+                counter += 1
+            player_letters.remove(player_input)
+            if letters != blanks:
+                print "Great guess!"
+        elif player_input not in player_letters:
+            print "You already guessed that!"
+        else:
+            print "Try again."
+            guesses -= 1
+            player_letters.remove(player_input)
+        print
+    if guesses == 0:
+        print "You lost! The word was " + word + "."
+    else:
+        print word
+        print
+        print "Great job! You won!"
+    yn = raw_input("Type 'quit' to quit, or press enter to play again! ")
+    if yn == "quit":
+        break
+    else:
+        print
+        print
+print "Okay bye!"
