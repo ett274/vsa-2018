@@ -47,7 +47,23 @@ wordlist = load_words()
 
 # your code begins here!
 while True:
-    word = choose_word(wordlist)
+    while True:
+        choice = raw_input("Type 1 for 1 player, type 2 for 2 or more players: ")
+        if choice == "1":
+            word = choose_word(wordlist)
+            break
+        elif choice == "2":
+            while True:
+                word = raw_input("One person enter a word here while the others look away: ").lower()
+                if word in wordlist:
+                    for i in range(100):
+                        print
+                    break
+                else:
+                    print "Sorry, you either spelled it wrong or put in an invalid word."
+            break
+        else:
+            print "Invalid input."
     letters = []
     for x in word:
         letters.append(x)
@@ -59,15 +75,15 @@ while True:
     for letter in string.lowercase:
         player_letters.append(letter)
     print "I'm thinking of a word that is " + str(len(word)) + " letters long."
-    guesses = len(word) + 3
+    guesses = 18 - len(word)
     while letters != blanks and guesses > 0:
         print " ".join(blanks)
-        print "Available letters: " + "".join(player_letters)
+        print "Available letters: " + "|".join(player_letters)
         if guesses == 1:
             print "You have 1 guess left."
         else:
             print "You have " + str(guesses) + " guesses left."
-        player_input = raw_input("Guess a letter: ")
+        player_input = raw_input("Guess a letter (or type in the whole word if you think you know it): ")
         if player_input not in string.lowercase and player_input != word:
             print "Invalid input."
         elif player_input == word:
