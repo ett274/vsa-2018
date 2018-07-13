@@ -53,15 +53,16 @@ while True:
         print "You win!"
         break
     else:
-        for x in range(0, 4):
+        for x in range(len(heylist)):
             if playlist[x] == heylist[x]:
                 heylist[x] = 'moo'
+                playlist[x] = 'woomy'
                 cows += 1
-
         for x in range(0, 4):
             if heylist[x] in playlist:
                 bulls += 1
                 heylist[x] = "angery"
+
 
         if cows == 1 and bulls == 1:
             print "1 cow, 1 bull"
