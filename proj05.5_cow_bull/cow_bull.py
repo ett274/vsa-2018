@@ -30,7 +30,17 @@ for i in number:
 
 guessin = 0
 while True:
-    playnum = raw_input("Guess a number: ")
+    while True:
+        playnum = raw_input("Guess a four-digit number: ")
+        if len(playnum) == 4:
+            try:
+                val = int(playnum)
+            except ValueError:
+                print("That's not a number!")
+            else:
+                break
+        else:
+            print "Input must be a four-digit number!"
     playlist = []
     for x in playnum:
         playlist.append(x)
