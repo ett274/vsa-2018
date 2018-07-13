@@ -22,44 +22,50 @@
 
 
 import random
-number = str(random.randint(1000,9999)) #random 4 digit number
-print number
-numlist = []
-for i in number:
-    numlist.append(i)
 
-guesses = 0
+number = str(random.randint(1000, 9999))  # random 4 digit number
+heylist = []
+for i in number:
+    heylist.append(i)
+
+guessin = 0
 while True:
-    cows = 0
-    bulls = 0
-    counter = 0
-    playnum = raw_input("Guess a 4-digit number: ")
-    guesses += 1
+    playnum = raw_input("Guess a number: ")
     playlist = []
     for x in playnum:
         playlist.append(x)
+    cows = 0
+    bulls = 0
+    heylist = []
+    for i in number:
+        heylist.append(i)
     if playnum == number:
         print "You win!"
         break
     else:
-        cowlist = []
-        for digit in playlist:
-            if digit == numlist[counter]:
+        for x in range(0, 4):
+            if playlist[x] == heylist[x]:
+                heylist[x] = 'moo'
                 cows += 1
-                cowlist.append(digit)
-            elif digit in numlist and digit not in cowlist:
-                bulls += 1
-            counter += 1
-    if cows == 1 and bulls == 1:
-        print "1 cow, 1 bulls"
-    elif cows == 1:
-        print "1 cow, " + str(bulls) + " bulls"
-    elif bulls == 1:
-        print str(cows) + " cows, 1 bull"
-    else:
-        print str(cows) + " cows, " + str(bulls) + " bulls"
 
-if guesses == 1:
+
+        for x in range(0, 4):
+            if heylist[x] in playlist:
+                bulls += 1
+                heylist[x] = "angery"
+
+
+        if cows == 1 and bulls == 1:
+            print "1 cow, 1 bull"
+        elif cows == 1:
+            print "1 cow, " + str(bulls) + " bulls"
+        elif bulls == 1:
+            print str(cows) + " cows, 1 bull"
+        else:
+            print str(cows) + " cows, " + str(bulls) + " bulls"
+        guessin += 1
+
+if guessin == 1:
     print "Wow, it only took you one try to find the number."
 else:
-    print "It took you " + str(guesses) + " tries to guess " + str(number) + ", the correct number."
+    print "It took you " + str(guessin) + " tries to guess " + str(number) + ", the correct number."
