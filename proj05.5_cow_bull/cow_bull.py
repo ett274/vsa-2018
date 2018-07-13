@@ -36,7 +36,7 @@ while True:
             try:
                 val = int(playnum)
             except ValueError:
-                print("That's not a number!")
+                print "That's not a number!"
             else:
                 break
         else:
@@ -58,12 +58,10 @@ while True:
                 heylist[x] = 'moo'
                 cows += 1
 
-
         for x in range(0, 4):
             if heylist[x] in playlist:
                 bulls += 1
                 heylist[x] = "angery"
-
 
         if cows == 1 and bulls == 1:
             print "1 cow, 1 bull"
