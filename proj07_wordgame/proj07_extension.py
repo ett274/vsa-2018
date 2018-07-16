@@ -25,12 +25,13 @@ def comp_choose_word(hand, word_list):
     # TO DO...
     x = '.'
     greatest_score = 0
-    for n in range(calculate_handlen(hand) + 1):
+    y = calculate_handlen(hand)
+    for n in range(y + 1):
         p_list = get_perms(hand, n)
         for item in p_list:
             if is_valid_word(item, hand, word_list) is True:
-                if greatest_score < get_word_score(item, calculate_handlen(hand)):
-                    greatest_score = get_word_score(item, calculate_handlen(hand))
+                if greatest_score < get_word_score(item, y):
+                    greatest_score = get_word_score(item, y)
                     x = item
     return x
 #
@@ -62,6 +63,7 @@ def comp_play_hand(hand, word_list):
         display_hand(hand)
         print "Calculating..."
         word = comp_choose_word(hand, word_list)
+        print "Time:", totalTime
         if word == ".":
             break
         hand = update_hand(hand, word)
@@ -122,4 +124,12 @@ if __name__ == '__main__':
     word_list = load_words()
     play_game(word_list)
 
-    
+# testnum = int(raw_input("How many times do you want to test this? "))
+# totaltotaltime =
+# for x in range(testnum):
+#     deal = deal_hand(HAND_SIZE)
+#     tStart = time.clock()
+#     comp_choose_word(deal, word_list)
+#     tEnd = time.clock()
+#     totaltime = tEnd - tStart
+#     totaltotaltime
