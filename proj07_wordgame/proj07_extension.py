@@ -1,5 +1,5 @@
-# Name:
-# Date:
+# Name: Eliza Thornton
+# Date: 7-16-18
 
 # proj07 Extension
 
@@ -23,7 +23,16 @@ def comp_choose_word(hand, word_list):
     word_list: list (string)
     """
     # TO DO...
-
+    x = '.'
+    greatest_score = 0
+    for n in range(calculate_handlen(hand) + 1):
+        p_list = get_perms(hand, n)
+        for item in p_list:
+            if is_valid_word(item, hand, word_list) is True:
+                if greatest_score < get_word_score(item, calculate_handlen(hand)):
+                    greatest_score = get_word_score(item, calculate_handlen(hand))
+                    x = item
+    return x
 #
 # Problem #6B: Computer plays a hand
 #
@@ -47,8 +56,18 @@ def comp_play_hand(hand, word_list):
      hand: dictionary (string -> int)
      word_list: list (string)
     """
-    # TO DO ...    
-    
+    # TO DO ...
+    total = 0
+    while True:
+        display_hand(hand)
+        print "Calculating..."
+        word = comp_choose_word(hand, word_list)
+        if word == ".":
+            break
+        hand = update_hand(hand, word)
+        total += get_word_score(word, calculate_handlen(hand))
+        print "Score for " + word + " earns " + str(get_word_score(word, calculate_handlen(hand)))
+        print "Total computer score is " + str(total) + "."
 #
 # Problem #6C: Playing a game
 #
@@ -73,7 +92,29 @@ def play_game(word_list):
     word_list: list (string)
     """
     # TO DO...
-        
+    p_hand = deal_hand(HAND_SIZE)
+    x = p_hand.copy()
+    while True:
+        choice = raw_input("Input a 'u' to play the game yourself, or input a 'c' to let a computer do it: ").lower()
+        if choice == 'u':
+            play_hand(p_hand, word_list)
+        elif choice == 'c':
+            comp_play_hand(p_hand, word_list)
+        while True:
+            input = raw_input("Input 'n' to play a new hand, 'r' to play the last hand again, or 'q' to quit: ").lower()
+            if input == 'n' or input == 'r' or input == 'e':
+                break
+            else:
+                print "Invalid input."
+        if input == 'n':
+            p_hand = deal_hand(HAND_SIZE)
+            x = p_hand.copy()
+        elif input == 'q':
+            print "Thanks for playing!"
+            break
+        elif input == 'r':
+            print "Playing with the previous hand..."
+            p_hand = x
 #
 # Build data structures used for entire session and play game
 #
