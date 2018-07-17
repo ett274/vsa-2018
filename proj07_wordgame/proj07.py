@@ -231,7 +231,7 @@ def play_hand(hand, word_list):
         display_hand(n_hand)
         print
         while True:
-            word = raw_input("Play a word. or a '.' to indicate that you are finished: ")
+            word = raw_input("Play a word. or a '.' to indicate that you are finished: ").lower()
             if word == '.':
                 print "Your total score was", total ,"points."
                 print

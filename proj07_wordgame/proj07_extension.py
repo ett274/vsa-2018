@@ -63,8 +63,8 @@ def comp_play_hand(hand, word_list):
         display_hand(hand)
         print "Calculating..."
         word = comp_choose_word(hand, word_list)
-        print "Time:", totalTime
         if word == ".":
+            print "Total computer score is " + str(total) + " points."
             break
         hand = update_hand(hand, word)
         total += get_word_score(word, calculate_handlen(hand))
@@ -97,14 +97,19 @@ def play_game(word_list):
     p_hand = deal_hand(HAND_SIZE)
     x = p_hand.copy()
     while True:
-        choice = raw_input("Input a 'u' to play the game yourself, or input a 'c' to let a computer do it: ").lower()
-        if choice == 'u':
-            play_hand(p_hand, word_list)
-        elif choice == 'c':
-            comp_play_hand(p_hand, word_list)
+        while True:
+            choice = raw_input("Input a 'u' to play the game yourself, or input a 'c' to let a computer do it: ").lower()
+            if choice == 'u':
+                play_hand(p_hand, word_list)
+                break
+            elif choice == 'c':
+                comp_play_hand(p_hand, word_list)
+                break
+            else:
+                print "Invalid input."
         while True:
             input = raw_input("Input 'n' to play a new hand, 'r' to play the last hand again, or 'q' to quit: ").lower()
-            if input == 'n' or input == 'r' or input == 'e':
+            if input == 'n' or input == 'r' or input == 'q':
                 break
             else:
                 print "Invalid input."
