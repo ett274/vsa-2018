@@ -1,4 +1,4 @@
-# Name:
+# Name: Eliza Thornton and Noah Sasadu
 # Date
 
 import feedparser
@@ -57,7 +57,7 @@ class NewsStory(object):
         * summary
         * link
     """
-    def __init__(self, guid):
+    def __init__(self, guid, title, subject, summary, link):
         """
         Returns a NewsStory object with the following attributes
         :param guid: a string that serves as a unique name for this entry 
@@ -67,10 +67,20 @@ class NewsStory(object):
         :param link: string     
         """
         self.guid = guid
-
+        self.title = title
+        self.subject = subject
+        self.summary = summary
+        self.link = link
     def get_guid(self):
         return self.guid
-
+    def get_title(self):
+        return self.title
+    def get_subject(self):
+        return self.subject
+    def get_summary(self):
+        return self.summary
+    def get_link(self):
+        return self.link
 # Your job is to write functions for the other 4 attributes.
 
 
@@ -94,6 +104,31 @@ class Trigger(object):
 # Problems 2-5
 
 # TODO: WordTrigger
+class WordTrigger(Trigger):
+    def __init__(self, word):
+        self.word = word.lower()
+
+    def is_word_in(self, text):
+        word_list = text.split()
+        counter = 0
+        for item in word_list:
+            for x in item:
+                for y in string.punctuation:
+                    if x == y and y == "'":
+                        s_list = item.split("'")
+                        word_list[counter] = s_list[0]
+                    elif x == y:
+                        word_list[counter] = word_list[counter].replace(x, '')
+            counter += 1
+        counter = 0
+        for i in word_list:
+            word_list[counter] = i.lower()
+            counter += 1
+        print word_list
+        if self.word in word_list:
+            return True
+        else:
+            return False
 
 # Create a class, WordTrigger, that is a subclass of trigger.
 
@@ -121,29 +156,77 @@ class Trigger(object):
 #  if the word is in the appropriate part of the story (for example, for title trigger,
 # to see if the word is in the title of the story).
 # TODO: TitleTrigger
-# TODO: SubjectTrigger
-# TODO: SummaryTrigger
+class TitleTrigger(WordTrigger):
+    def evaluate(self, story):
+        return self.is_word_in(story.get_title())
 
+# TODO: SubjectTrigger
+class SubjectTrigger(WordTrigger):
+    def evaluate(self, story):
+        return self.is_word_in(story.get_subject())
+# TODO: SummaryTrigger
+class SummaryTrigger(WordTrigger):
+    def evaluate(self, story):
+        return self.is_word_in(story.get_summary())
 
 # Composite Triggers
 # Problems 6-8
 
 # Each of these triggers should be a subclass of Trigger, NOT WordTrigger.
 # That means they will need their own constructor, because they cannot inherit from the
-#  class WordTigger.
+#  class WordTrigger.
 # They will also need an evaluate method.
 # TODO: NotTrigger
+class NotTrigger(Trigger):
+    def __init__(self, trigger):
+        self.trigger = trigger
+
+    def evaluate(self, story):
+        if self.trigger.evaluate(story) is True:
+            return False
+        else:
+            return True
 # TODO: AndTrigger
+class AndTrigger(Trigger):
+    def __init__(self, trigger1, trigger2):
+        self.trigger1 = trigger1
+        self.trigger2 = trigger2
+
+    def evaluate(self, story):
+        if self.trigger1.evaluate(story) is True and self.trigger2.evaluate(story) is True:
+            return True
+        else:
+            return False
 # TODO: OrTrigger
+class OrTrigger(Trigger):
+    def __init__(self, trigger1, trigger2):
+        self.trigger1 = trigger1
+        self.trigger2 = trigger2
 
-
+    def evaluate(self, story):
+        if self.trigger1.evaluate(story) is True or self.trigger2.evaluate(story) is True:
+            return True
+        else:
+            return False
 # Phrase Trigger
 # Question 9
 
 # This is also a subclass of Trigger, so it will need a constructor and an evaluate
 # method.
 # TODO: PhraseTrigger
+class PhraseTrigger(Trigger):
+    def __init__(self, phrase):
+        self.phrase = phrase
 
+    def evaluate(self, story):
+        if self.phrase in story.get_title():
+            return True
+        elif self.phrase in story.get_summary():
+            return True
+        elif self.phrase in story.get_subject():
+            return True
+        else:
+            return False
 
 #======================
 # Part 3
@@ -159,7 +242,12 @@ def filter_stories(stories, triggerlist):
     # TODO: Problem 10
     # This is a placeholder (we're just returning all the stories, with no filtering) 
     # Feel free to change this line!
-    return stories
+    good_stories = []
+    for trigger in triggerlist:
+        for story in stories:
+            if trigger.evaluate(story) is True:
+                good_stories.append(story)
+    return good_stories
 
 #======================
 # Extensions: Part 4
@@ -187,21 +275,42 @@ def readTriggerConfig(filename):
     # 'lines' has a list of lines you need to parse
     # Build a set of triggers from it and
     # return the appropriate ones
-    
+    print lines
+    trigger_list = {}
+    actual_trigger_list = []
+    for line in lines:
+        holder = line.split(" ")
+        counter = 0
+        for x in holder:
+            if x == "TITLE":
+                trigger_list[holder[counter - 1]] = TitleTrigger(holder[counter + 1])
+            elif x == "SUBJECT":
+                trigger_list[holder[counter - 1]] = SubjectTrigger(holder[counter + 1])
+            elif x == "PHRASE":
+                trigger_list[holder[counter - 1]] = PhraseTrigger(holder[counter + 1])
+            elif x == "AND":
+                trigger_list[holder[counter - 1]] = AndTrigger(holder[counter + 1], holder[counter + 2])
+            elif x == "ADD":
+                counter += 1
+                while counter <= len(holder) - 1:
+                    actual_trigger_list.append(trigger_list[holder[counter]])
+                    counter += 1
+            counter += 1
+    return actual_trigger_list
 import thread
 
 def main_thread(p):
     # A sample trigger list - you'll replace
     # this with something more configurable in Problem 11
-    t1 = SubjectTrigger("Trump")
+    t1 = SubjectTrigger("Papa")
     t2 = SummaryTrigger("Vanderbilt")
-    t3 = PhraseTrigger("Net Neutrality")
-    t4 = OrTrigger(t2, t3)
-    triggerlist = [t1, t4]
+    t3 = PhraseTrigger("gets slapped")
+    t4 = OrTrigger(t1, t3)
+    # triggerlist = [t1]
     
     # TODO: Problem 11
     # After implementing readTriggerConfig, uncomment this line 
-    #triggerlist = readTriggerConfig("triggers.txt")
+    triggerlist = readTriggerConfig("triggers.txt")
 
     guidShown = []
     
