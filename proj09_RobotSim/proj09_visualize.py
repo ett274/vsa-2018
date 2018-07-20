@@ -28,8 +28,8 @@ class RobotVisualization:
         # Draw a backing and lines
         x1, y1 = self._map_coords(0, 0)
         x2, y2 = self._map_coords(width, height)
-        self.w.create_rectangle(x1, y1, x2, y2, fill = "white")
-
+        self.w.create_rectangle(x1, y1, x2, y2, fill = "#b254ff")
+                                                    #clean tiles
         # Draw gray squares for dirty tiles
         self.tiles = {}
         for i in range(width):
@@ -37,8 +37,8 @@ class RobotVisualization:
                 x1, y1 = self._map_coords(i, j)
                 x2, y2 = self._map_coords(i + 1, j + 1)
                 self.tiles[(i, j)] = self.w.create_rectangle(x1, y1, x2, y2,
-                                                             fill = "gray")
-
+                                                             fill = "#911EF6")
+                                                                #dirty tiles
         # Draw gridlines
         for i in range(width + 1):
             x1, y1 = self._map_coords(i, 0)
@@ -77,8 +77,9 @@ class RobotVisualization:
                                   y + 0.6 * math.cos(math.radians(d1)))
         x3, y3 = self._map_coords(x + 0.6 * math.sin(math.radians(d2)),
                                   y + 0.6 * math.cos(math.radians(d2)))
-        return self.w.create_polygon([x1, y1, x2, y2, x3, y3], fill="red")
 
+        return self.w.create_polygon([x1, y1, x2, y2, x3, y3], fill="#54ffb2")
+                                                                # arrow color
     def update(self, room, robots):
         "Redraws the visualization with the specified room and robot state."
         # Removes a gray square for any tiles have been cleaned.
@@ -99,7 +100,8 @@ class RobotVisualization:
             x1, y1 = self._map_coords(x - 0.08, y - 0.08)
             x2, y2 = self._map_coords(x + 0.08, y + 0.08)
             self.robots.append(self.w.create_oval(x1, y1, x2, y2,
-                                                  fill = "black"))
+                                                  fill = "#ffb254"))
+                                                        #dot
             self.robots.append(
                 self._draw_robot(robot.getRobotPosition(), robot.getRobotDirection()))
         # Update text
