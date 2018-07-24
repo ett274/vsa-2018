@@ -4,7 +4,6 @@
 
 import math
 import random
-
 import proj09_visualize
 
 
@@ -244,22 +243,6 @@ class StandardRobot(Robot):
     it hits a wall, it chooses a new direction randomly.
     """
 
-    def updatePositionAndClean(self):
-        """
-        Simulate the passage of a single time-step.
-
-        Move the robot to a new position and mark the tile it is on as having
-        been cleaned.
-        """
-        while True:
-            maybe_position = self.position.getNewPosition(self.direction, self.speed)
-            if self.room.isPositionInRoom(maybe_position) is True:
-                self.position = maybe_position
-                self.room.cleanTileAtPosition(self.position)
-                break
-            else:
-                self.setRobotDirection(random.uniform(0, 360))
-
 # === Problem 3
 
 def runSimulation(num_robots, speed, width, height, min_coverage, num_trials,
@@ -281,12 +264,12 @@ def runSimulation(num_robots, speed, width, height, min_coverage, num_trials,
                 RandomWalkRobot)
     """
     avg = 0
-    anim = ''
+    movie = ''
     for num in range(num_trials):
         time = 0
         room = RectangularRoom(width, height)
         if animate is True:
-            anim = proj09_visualize.RobotVisualization(num_robots, width, height, delay)
+            movie = proj09_visualize.RobotVisualization(num_robots, width, height, delay)
         robot_list = []
         for x in range(num_robots):
             robot_list.append(robot_type(room, speed))
@@ -296,10 +279,10 @@ def runSimulation(num_robots, speed, width, height, min_coverage, num_trials,
             for robot in robot_list:
                 robot.updatePositionAndClean()
             if animate is True:
-                anim.update(room, robot_list)
+                movie.update(room, robot_list)
             time += 1
         if animate is True:
-            anim.done()
+            movie.done()
         avg += time
     return avg / num_trials
 
@@ -311,24 +294,24 @@ def runSimulation(num_robots, speed, width, height, min_coverage, num_trials,
 # 2) How long does it take two robots to clean 80% of rooms with dimensions 
 #	 20x20, 25x16, 40x10, 50x8, 80x5, and 100x4?
 
-def showPlot1(delay, animate):
+def showPlot1(trials, delay, animate):
     """
     Produces a plot showing dependence of cleaning time on number of robots.
     """
     for x in range(1, 11):
-        print runSimulation(x, 1, 20, 20, .8, 1, StandardRobot, delay, animate)
+        print str(x) + ", " + str(runSimulation(x, 1, 20, 20, .8, trials, StandardRobot, delay, animate))
 
 
-def showPlot2(delay, animate):
+def showPlot2(trials, delay, animate):
     """
     Produces a plot showing dependence of cleaning time on room shape.
     """
-    print runSimulation(2, 1, 20, 20, .8, 1, StandardRobot, delay, animate)
-    print runSimulation(2, 1, 25, 16, .8, 1, StandardRobot, delay, animate)
-    print runSimulation(2, 1, 40, 10, .8, 1, StandardRobot, delay, animate)
-    print runSimulation(2, 1, 50, 8, .8, 1, StandardRobot, delay, animate)
-    print runSimulation(2, 1, 80, 5, .8, 1, StandardRobot, delay, animate)
-    print runSimulation(2, 1, 100, 4, .8, 1, StandardRobot, delay, animate)
+    print str(20. / 20) + ", " + str(runSimulation(2, 1, 20, 20, .8, trials, StandardRobot, delay, animate))
+    print str(25. / 16) + ", " + str(runSimulation(2, 1, 25, 16, .8, trials, StandardRobot, delay, animate))
+    print str(40. / 10) + ", " + str(runSimulation(2, 1, 40, 10, .8, trials, StandardRobot, delay, animate))
+    print str(50. / 8) + ", " + str(runSimulation(2, 1, 50, 8, .8, trials, StandardRobot, delay, animate))
+    print str(80. / 5) + ", " + str(runSimulation(2, 1, 80, 5, .8, trials, StandardRobot, delay, animate))
+    print str(100 / 4) + ", " + str(runSimulation(2, 1, 100, 4, .8, trials, StandardRobot, delay, animate))
 
 
 # === Problem 5
@@ -355,11 +338,17 @@ class RandomWalkRobot(Robot):
 # For the parameters tested below (cleaning 80% of a 20x20 square room),
 # RandomWalkRobots take approximately twice as long to clean the same room as
 # StandardRobots do.
-def showPlot3(delay, animate):
+def showPlot3(trials, delay, animate):
     """
     Produces a plot comparing the two robot strategies.
     """
-    print runSimulation(2, 1, 20, 20, .8, 1, StandardRobot, delay, animate)
-    print runSimulation(2, 1, 20, 20, .8, 1, RandomWalkRobot, delay, animate)
+    print runSimulation(2, 1, 20, 20, .8, trials, StandardRobot, delay, animate)
+    print runSimulation(2, 1, 20, 20, .8, trials, RandomWalkRobot, delay, animate)
 
-runSimulation(1, 1, 20, 20, .8, 1, StandardRobot, 0.1, True)
+# some goofs down here
+robots = int(raw_input("Number of robots: "))
+length = int(raw_input("Width of room: "))
+tall = int(raw_input("Height of room: "))
+coverage = float(raw_input("Percent of room to be covered: "))
+trials = int(raw_input("Number of trials: "))
+print runSimulation(robots, 1, length, tall, coverage, trials, StandardRobot, 0, True)

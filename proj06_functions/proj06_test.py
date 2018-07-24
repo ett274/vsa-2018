@@ -1,4 +1,4 @@
-from proj06_01 import *
+from proj06 import *
 
 
 # TESTS

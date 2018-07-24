@@ -128,13 +128,3 @@ def play_game(word_list):
 if __name__ == '__main__':
     word_list = load_words()
     play_game(word_list)
-
-# testnum = int(raw_input("How many times do you want to test this? "))
-# totaltotaltime =
-# for x in range(testnum):
-#     deal = deal_hand(HAND_SIZE)
-#     tStart = time.clock()
-#     comp_choose_word(deal, word_list)
-#     tEnd = time.clock()
-#     totaltime = tEnd - tStart
-#     totaltotaltime

@@ -1,7 +1,7 @@
 # proj11: Recursion Programming Lab
 
-# Name:
-# Date:
+# Name: beep boop
+# Date: bop
 
 # Tests are created for you in proj11_test.py. Uncomment tests as you need them.
 # Otherwise, you could call a function that you haven't defined yet, and you would get an error.
@@ -11,15 +11,24 @@
 # Pre: lst is an list of 'size' integers, size is nonnegative
 # Post: the sum of lst[0]...lst[size-1] is returned
 # Challenge: This function could be done by dividing the list in half and performing recursive calls on each half (as opposed to just shrinking the size by one each time).
-
+def sumList(lst):
+    if len(lst) >= 2:
+        return sumList(lst[0:len(lst)/2]) + sumList(lst[len(lst)/2:len(lst)])
+    elif len(lst) == 1:
+        return lst[0]
+    else:
+        return 0
 
 
 # member(target, set);
 # Task: determine if target is in the set
 # Pre: set is an list of 'size' integers, size is nonnegative
 # Post: true is returned if target is in the set, else false; the set is unchanged
-
-
+def member(target, set):
+    if target in set:
+        return True
+    else:
+        return False
 
 # addStar(str);
 # Given a string, compute recursively a new string where all the adjacent characters are now separated by a "*".
@@ -29,99 +38,145 @@
 # addStar("hello") --> "h*e*l*l*o"
 # addStar("abc") --> "a*b*c"
 # addStar("ab") --> "a*b"
+def addStar(string):
+    if string == "":
+        return ""
+    elif len(string) == 1:
+        return string
+    else:
+        return addStar(string[0:len(string)/2]) + "*" + addStar(string[len(string)/2:len(string)])
+    # harmonicSum(n);
+    # Task: compute the sum of the first n harmonic terms
+    # Pre: n is a positive integer
+    # Post: the sum of the first n harmonic terms is returned.
+    # The harmonic series is 1 + (1/2) + (1/3) + (1/4) + ...
+def harmonicSum(n):
+    if n == 0 or n == 1:
+        return n
+    else:
+        return 1 / float(n) + harmonicSum(n - 1)
+    # isPalindrome(str);
+    # Task: determine if a string is a palindrome
+    # Pre: str is a string object
+    # Post: returns true if str is a palindrome, otherwise returns false
+    # The test is case insensitive (user .upper() & .lower()).
+    # You do not need to worry about trimming blanks from the ends of the string.
+    # Note: the empty string is a palindrome
+def isPalindrome(string):
+    strang = string.replace(' ', '')
+    if len(strang) <= 1:
+        return True
+    elif strang[0].lower() != strang[-1].lower():
+        return False
+    else:
+        return isPalindrome(strang[1:-1])
+    # replace(target, replacement, numbers, size);
+    # Task: replace all occurrences of 'target' in the list 'numbers'with 'replacement'
+    # Pre: 'numbers' is an list of 'size' integers, size is nonnegative
+    # Post: all occurrences of 'target' in 'numbers' have been replaced  with 'replacement';
+    # the number of replacements performed is returned to the caller.
+def replace(target, replacement, numbers, size):
+    if size == 1:
+        if numbers[0] == target:
+            numbers[0] = replacement
+            return 1
+        else:
+            return 0
+    if numbers[size - 1] == target:
+        numbers[size - 1] = replacement
+        return 1 + replace(target, replacement, numbers, size - 1)
+    else:
+        return 0 + replace(target, replacement, numbers, size - 1)
+    # g_c_d(x, y);
+    # Task: compute the Greatest Common Divisor (GCD) of two nonnegative integers using
+    # Euclid's formula:
+    # Euclid's method for computing the greatest common divisor (GCD) of two nonnegative
+    # integers a and b is as follows. Divide a and b to obtain the integer quotient q
+    # and remainder r, so that a = bq+r (if b = 0, then GCD(a, b) = a).
+    # Then GCD(a, b) = GCD(b, r). Replace a with b and b with r and repeat the procedure.
+    # Because the remainders are decreasing, eventually a remainder of 0 will result.
+    # The last nonzero remainder is the greatest common divisor of a and b.
+    # Pre: the parameters x & y are nonnegative
+    # Post: the GCD of x & y is returned
+def g_c_d(x, y):
+    if x == 0:
+        return y
+    elif y == 0:
+        return x
+    elif x % y == 0:
+        return y
+    else:
+        r = x % y
+        return g_c_d(y, r)
+    # void reverseLst(lst, first, last);
+    # Task: reverse the contents of lst[first]...lst[last]
+    # Pre: 'lst' is a list of at least 'last'+1 integers, first & last are nonnegative
+    # Post: the elements lst[first]...lst[last]have been reversed.
+def reverseLst(lst, first, last):
+    if first < last:
+        x = lst[last]
+        lst[last] = lst[first]
+        lst[first] = x
+        reverseLst(lst, first + 1, last - 1)
 
+    # convert2Binary(num);
+    # Task: produce the binary representation of a decimal number
+    # A decimal number is converted to binary by repeated division by 2.
+    # For each division, keep track of the quotient and remainder.
+    # The remainder becomes the low-order bit (rightmost bit) of the binary representation.
+    # The higher-order bits are determined by repeating the processes with the quotient.
+    # The process stops when num is either zero or one.
+    # Pre: num is a nonnegative integer
+    # Post: the binary representation of num is produced and returned as a string.
+def convert2Binary(num):
+    if num != 0 and num != 1:
+        return convert2Binary(num / 2) + str(num % 2)
+    else:
+        return str(num)
 
+    # void printPattern (num);
+    # Task: Print a pseudo hourglass pattern on the screen
+    # Pre: num is a positive integer
+    # Post: the desired pattern is displayed on print
+    # You may use iteration to print a single line of *'s,
+    # but must use recursion to complete the pattern.
+    # Example: a call to printPattern(4) should produce the pattern below
+    # (excluding the beginning and ending comment):
+    #
+    # ****
+    # ***
+    # **
+    # *
+    # **
+    # ***
+    # ****
+def printPattern(num, prev_num, true_num):
+    stars = ''
+    for x in range(num):
+        stars = stars + "*"
+    print stars
+    if num == true_num and num > prev_num:
+        return
+    elif num == 1 or num > prev_num:
+        printPattern(num + 1, num, true_num)
+    else:
+        printPattern(num - 1, num, true_num)
 
-# harmonicSum(n);
-# Task: compute the sum of the first n harmonic terms
-# Pre: n is a positive integer
-# Post: the sum of the first n harmonic terms is returned.
-# The harmonic series is 1 + (1/2) + (1/3) + (1/4) + ...
+    # void lstInitialize(lst, value, lb, ub);
+    # Task: initialize all elements of the lst between indices lb and ub to the given value, including the elements at lb & ub
+    # Note: lb = lower bound, ub = upper bound
+    # Pre: lb and ub are valid indices into the list a [the actual size of the lst is unknown]
+    # Post: the list elements in the segment a[lb..ub] have been set to value
+    # Challenge: This function must be done by dividing the list segment in half and performing recursive calls on each half (as opposed to just shrinking the array bound by one each time)
+def lstInitialize(lst, value, lb, ub):
+    if
+    lst
 
-
-
-# isPalindrome(str);
-# Task: determine if a string is a palindrome
-# Pre: str is a string object
-# Post: returns true if str is a palindrome, otherwise returns false
-# The test is case insensitive (user .upper() & .lower()).
-# You do not need to worry about trimming blanks from the ends of the string.
-# Note: the empty string is a palindrome
-
-
-
-# replace(target, replacement, numbers, size);
-# Task: replace all occurrences of 'target' in the list 'numbers'with 'replacement'
-# Pre: 'numbers' is an list of 'size' integers, size is nonnegative
-# Post: all occurrences of 'target' in 'numbers' have been replaced  with 'replacement';
-# the number of replacements performed is returned to the caller.
-
-
-
-# g_c_d(x, y);
-# Task: compute the Greatest Common Divisor (GCD) of two nonnegative integers using
-# Euclid's formula:
-# Euclid's method for computing the greatest common divisor (GCD) of two nonnegative
-# integers a and b is as follows. Divide a and b to obtain the integer quotient q
-# and remainder r, so that a = bq+r (if b = 0, then GCD(a, b) = a).
-# Then GCD(a, b) = GCD(b, r). Replace a with b and b with r and repeat the procedure.
-# Because the remainders are decreasing, eventually a remainder of 0 will result.
-# The last nonzero remainder is the greatest common divisor of a and b.
-# Pre: the parameters x & y are nonnegative
-# Post: the GCD of x & y is returned
-
-
-
-# void reverseLst(lst, first, last);
-# Task: reverse the contents of lst[first]...lst[last]
-# Pre: 'lst' is a list of at least 'last'+1 integers, first & last are nonnegative
-# Post: the elements lst[first]...lst[last]have been reversed.
-
-
-
-# convert2Binary(num);
-# Task: produce the binary representation of a decimal number
-# A decimal number is converted to binary by repeated division by 2.
-# For each division, keep track of the quotient and remainder.
-# The remainder becomes the low-order bit (rightmost bit) of the binary representation.
-# The higher-order bits are determined by repeating the processes with the quotient.
-# The process stops when num is either zero or one.
-# Pre: num is a nonnegative integer
-# Post: the binary representation of num is produced and returned as a string.
-
-
-
-# void printPattern (num);
-# Task: Print a pseudo hourglass pattern on the screen
-# Pre: num is a positive integer
-# Post: the desired pattern is displayed on print
-# You may use iteration to print a single line of *'s,
-# but must use recursion to complete the pattern.
-# Example: a call to printPattern(4) should produce the pattern below
-# (excluding the beginning and ending comment):
-#
-# ****
-# ***
-# **
-# *
-# **
-# ***
-# ****
-
-
-
-# void lstInitialize(lst, value, lb, ub);
-# Task: initialize all elements of the lst between indices lb and ub to the given value, including the elements at lb & ub
-# Note: lb = lower bound, ub = upper bound
-# Pre: lb and ub are valid indices into the list a [the actual size of the lst is unknown]
-# Post: the list elements in the segment a[lb..ub] have been set to value
-# Challenge: This function must be done by dividing the list segment in half and performing recursive calls on each half (as opposed to just shrinking the array bound by one each time)
-
-"""
-Extensions:
-Here are some more to try on your own! These do not come with tests...
-How would you write tests for these functions?
-"""
+# """
+# Extensions:
+# Here are some more to try on your own! These do not come with tests...
+# How would you write tests for these functions?
+# """
 
 # binomialCoeff (n, r);
 # Task: Compute the Binomial Coefficient using Pascal's Triangle.
@@ -131,7 +186,6 @@ How would you write tests for these functions?
 # B(n, r) = 1                          if r = 0 or r = n
 # B(n, r) = B(n-1, r-1) + B(n-1, r)    otherwise
 # Pre: r & n are non-negative, and r<=n
-
 
 
 # count2(n);
@@ -144,7 +198,6 @@ How would you write tests for these functions?
 # count2(2212) --> 4
 
 
-
 # countSubs(str, sub);
 # Task: Given a string and a non-empty substring sub, compute recursively the number of times that sub appears in the string, without the sub  strings overlapping.
 # Pre: sub is a non-empty string
@@ -153,7 +206,6 @@ How would you write tests for these functions?
 # countSubs("catcowcat", "cat") --> 2
 # countSubs("catcowcat", "cow") --> 1
 # countSubs("catcowcat", "dog") --> 0
-
 
 
 # moveXs(str);

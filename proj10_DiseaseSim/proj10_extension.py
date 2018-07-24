@@ -4,20 +4,18 @@
 # Date:
 
 
-
-import numpy
 import random
-import pylab
+
 from proj10 import *
+
 
 #
 # PROBLEM 1
 #
 class ResistantVirus(SimpleVirus):
-
     """
     Representation of a virus which can have drug resistance.
-    """      
+    """
 
     def __init__(self, maxBirthProb, clearProb, resistances, mutProb):
 
@@ -38,11 +36,22 @@ class ResistantVirus(SimpleVirus):
         the probability of the offspring acquiring or losing resistance to a drug.        
 
         """
+        super(ResistantVirus, self).__init__(maxBirthProb, clearProb)
+        self.maxBirthProb = maxBirthProb
+        self.clearProb = clearProb
+        self.resistances = resistances
+        self.mutProb = mutProb
 
-
-        # TODO
-
-
+    def doesClear(self):
+        """ Stochastically determines whether this virus particle is cleared from the
+        patient's body at a time step.
+        returns: True with probability self.clearProb and otherwise returns
+        False.
+        """
+        if random.random() <= self.clearProb:
+            return True
+        else:
+            return False
 
     def isResistantTo(self, drug):
 
@@ -55,11 +64,14 @@ class ResistantVirus(SimpleVirus):
         returns: True if this virus instance is resistant to the drug, False
         otherwise.
         """
+        if self.resistances[drug] is True:
+            return True
+        else:
+            return False
 
         # TODO
 
-
-    def reproduce(self, popDensity, activeDrugs):
+    def reproducf(self, popDensity, activeDrugs):
 
         """
         Stochastically determines whether this virus particle reproduces at a
@@ -99,12 +111,29 @@ class ResistantVirus(SimpleVirus):
         maxBirthProb and clearProb values as this virus. Raises a
         NoChildException if this virus particle does not reproduce.         
         """
-        # TODO
+        if len(activeDrugs) > 0:
+            for drig in activeDrugs:
+                if self.isResistantTo(drig) is False:
+                    raise NoChildException
+        if random.random() <= self.maxBirthProb * (1 - popDensity):
+            child_resistance = self.resistances
+            for drug in self.resistances:
+                if self.isResistantTo(drug) is True:
+                    if random.random() <= (1 - self.mutProb):
+                        child_resistance[drug] = True
+                    else:
+                        child_resistance[drug] = False
+                else:
+                    if random.random() <= (1 - self.mutProb):
+                        child_resistance[drug] = False
+                    else:
+                        child_resistance[drug] = True
+            return ResistantVirus(self.maxBirthProb, self.clearProb, child_resistance, self.mutProb)
+        else:
+            raise NoChildException
 
-            
 
 class Patient(SimplePatient):
-
     """
     Representation of a patient. The patient is able to take drugs and his/her
     virus population can acquire resistance to the drugs he/she takes.
@@ -121,8 +150,11 @@ class Patient(SimplePatient):
         
         maxPop: the  maximum virus population for this patient (an integer)
         """
-        # TODO
-    
+
+        super(Patient, self).__init__(viruses, maxPop)
+        self.viruses = viruses
+        self.maxPop = maxPop
+        self.drugs = []
 
     def addPrescription(self, newDrug):
 
@@ -137,7 +169,8 @@ class Patient(SimplePatient):
         """
         # TODO
         # should not allow one drug being added to the list multiple times
-
+        if newDrug not in self.drugs:
+            self.drugs.append(newDrug)
 
     def getPrescriptions(self):
 
@@ -146,9 +179,7 @@ class Patient(SimplePatient):
         returns: The list of drug names (strings) being administered to this
         patient.
         """
-
-        # TODO
-        
+        return self.drugs
 
     def getResistPop(self, drugResist):
         """
@@ -161,9 +192,14 @@ class Patient(SimplePatient):
         returns: the population of viruses (an integer) with resistances to all
         drugs in the drugResist list.
         """
-        # TODO
-                   
+        resistant_viruses = []
+        for drug in drugResist:
+            for virus in self.viruses:
+                if virus.isResistantTo(drug) is True and virus not in resistant_viruses:
+                    resistant_viruses.append(virus)
+        return len(resistant_viruses)
 
+        # TODO
 
     def update(self):
 
@@ -184,15 +220,24 @@ class Patient(SimplePatient):
         integer)
         """
         # TODO
+        for virus in self.viruses:
+            if virus.doesClear() is True:
+                self.viruses.remove(virus)
+        popDens = float(self.getTotalPop()) / float(self.maxPop)
+        for virus in self.viruses:
+            try:
+                self.viruses.append(virus.reproducf(popDens, self.getPrescriptions()))
+            except NoChildException:
+                pass
 
+        return len(self.viruses)
 
 
 #
 # PROBLEM 2
 #
 
-def simulationWithDrug():
-
+def simulationWithDrug(number_of_viruses):
     """
 
     Runs simulations and plots graphs for problem 4.
@@ -202,15 +247,22 @@ def simulationWithDrug():
     vs. time are plotted
     """
     # TODO
-
+    some_viruses = []
+    for x in range(number_of_viruses + 1):
+        some_viruses.append(ResistantVirus(0.1, 0.05, {"drug_a": False}, 0.005))
+    patient = Patient(some_viruses, 1000)
+    for m in range(151):
+        print str(m) + " " + str(patient.update()) + " " + str(patient.getResistPop(['drug_a']))
+    patient.addPrescription("drug_a")
+    for m in range(151, 301):
+        print str(m) + " " + str(patient.update()) + " " + str(patient.getResistPop(['drug_a']))
 
 
 #
 # PROBLEM 3
 #        
 
-def simulationDelayedTreatment():
-
+def simulationDelayedTreatment(trials):
     """
     Runs simulations and make histograms for problem 5.
     Runs multiple simulations to show the relationship between delayed treatment
@@ -219,15 +271,29 @@ def simulationDelayedTreatment():
     150, 75, 0 timesteps (followed by an additional 150 timesteps of
     simulation).    
     """
+    timestamps = [300, 150, 75, 0]
 
-    # TODO
+    for timestamp in timestamps:
+        for x in range(trials + 1):
+            virus_list = []
+            for m in range(101):
+                virus_list.append(ResistantVirus(0.1,0.05, {"doge": False}, 0.005))
+            person = Patient(virus_list, 1000)
+            if timestamp != 0:
+                for time in range(timestamp + 1):
+                    person.update()
+            person.addPrescription("doge")
+            for tim in range(150):
+                person.update()
+            print person.update()
+        print "----------"
+
 
 #
 # PROBLEM 4
 #
 
-def simulationTwoDrugsDelayedTreatment():
-
+def simulationTwoDrugsDelayedTreatment(trials):
     """
     Runs simulations and make histograms for problem 6.
     Runs multiple simulations to show the relationship between administration
@@ -237,8 +303,24 @@ def simulationTwoDrugsDelayedTreatment():
     150, 75, 0 timesteps between adding drugs (followed by an additional 150
     timesteps of simulation).
     """
-
-    # TODO
+    timestamps = [300, 150, 75, 0]
+    for timestamp in timestamps:
+        for x in range(trials + 1):
+            virus_list = []
+            for m in range(101):
+                virus_list.append(ResistantVirus(0.1,0.05, {"drug_a": False, "drug_b": False}, 0.005))
+            person = Patient(virus_list, 1000)
+            for t in range(151):
+                person.update()
+            person.addPrescription("drug_a")
+            if timestamp != 0:
+                for t in range(timestamp + 1):
+                    person.update()
+            person.addPrescription("drug_b")
+            for t in range(150):
+                person.update()
+            print person.update()
+        print "----------"
 
 
 
@@ -246,8 +328,7 @@ def simulationTwoDrugsDelayedTreatment():
 # PROBLEM 5
 #    
 
-def simulationTwoDrugsVirusPopulations():
-
+def simulationTwoDrugsVirusPopulations(trials):
     """
 
     Run simulations and plot graphs examining the relationship between
@@ -257,7 +338,33 @@ def simulationTwoDrugsVirusPopulations():
     a simulations for which drugs are administered simultaneously.        
 
     """
-    #TODO
+    for x in range(trials + 1):
+        virus_list = []
+        for m in range(101):
+            virus_list.append(ResistantVirus(0.1, 0.05, {"drug_a": False, "drug_b": False}, 0.005))
+        person = Patient(virus_list, 1000)
+        for t in range(151):
+            person.update()
+        person.addPrescription("drug_a")
+        for t in range(301):
+            person.update()
+        person.addPrescription("drug_b")
+        for t in range(150):
+            person.update()
+        print person.update()
+    print "--------"
+    for x in range(trials + 1):
+        virus_list = []
+        for m in range(101):
+            virus_list.append(ResistantVirus(0.1, 0.05, {"drug_a": False, "drug_b": False}, 0.005))
+        person = Patient(virus_list, 1000)
+        for t in range(151):
+            person.update()
+        person.addPrescription("drug_a")
+        person.addPrescription("drug_b")
+        for t in range(150):
+            person.update()
+        print person.update()
 
 
-
+simulationWithDrug(100)
